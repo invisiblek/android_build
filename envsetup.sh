@@ -169,7 +169,11 @@ function setpaths()
     unset ARM_EABI_TOOLCHAIN ARM_EABI_TOOLCHAIN_PATH
     case $ARCH in
         arm)
-            toolchaindir=arm/arm-eabi-$targetgccversion/bin
+            if [ -z $(get_build_var TARGET_KERNEL_TOOLCHAIN) ]; then
+                toolchaindir=arm/arm-eabi-$targetgccversion/bin
+            else
+                toolchaindir=arm/$(get_build_var TARGET_KERNEL_TOOLCHAIN)/bin
+            fi
             if [ -d "$gccprebuiltdir/$toolchaindir" ]; then
                  export ARM_EABI_TOOLCHAIN="$gccprebuiltdir/$toolchaindir"
                  ARM_EABI_TOOLCHAIN_PATH=":$gccprebuiltdir/$toolchaindir"
