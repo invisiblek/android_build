@@ -179,7 +179,11 @@ function setpaths()
     case $ARCH in
         arm)
             # Legacy toolchain configuration used for ARM kernel compilation
-            toolchaindir=arm/arm-eabi-$targetgccversion/bin
+            if [ -z $(get_build_var TARGET_KERNEL_TOOLCHAIN) ]; then
+                toolchaindir=arm/arm-eabi-$targetgccversion/bin
+            else
+                toolchaindir=arm/$(get_build_var TARGET_KERNEL_TOOLCHAIN)/bin
+            fi
             if [ -d "$gccprebuiltdir/$toolchaindir" ]; then
                  export ARM_EABI_TOOLCHAIN="$gccprebuiltdir/$toolchaindir"
                  ANDROID_KERNEL_TOOLCHAIN_PATH="$ARM_EABI_TOOLCHAIN":
