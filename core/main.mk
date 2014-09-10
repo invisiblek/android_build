@@ -147,11 +147,7 @@ include $(BUILD_SYSTEM)/qcom_utils.mk
 # Include the google-specific config
 -include vendor/google/build/config.mk
 
-# Include the extra device config
--include vendor/extra/device.mk
-
 VERSION_CHECK_SEQUENCE_NUMBER := 6
-
 -include $(OUT_DIR)/versions_checked.mk
 ifneq ($(VERSION_CHECK_SEQUENCE_NUMBER),$(VERSIONS_CHECKED))
 
