@@ -39,7 +39,7 @@ pathmap_INCL := \
     frameworks-native:frameworks/native/include \
     libhardware:hardware/libhardware/include \
     libhardware_legacy:hardware/libhardware_legacy/include \
-    libril:hardware/ril/include \
+    libril:$(TOPDIR)/$(call project-path-for,ril)/include \
     opengl-tests-includes:frameworks/native/opengl/tests/include \
     system-core:system/core/include \
     audio:system/media/audio/include \
