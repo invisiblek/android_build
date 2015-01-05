@@ -1105,6 +1105,11 @@ INTERNAL_RECOVERYIMAGE_ARGS := \
 # Assumes this has already been stripped
 ifdef INTERNAL_KERNEL_CMDLINE
   INTERNAL_RECOVERYIMAGE_ARGS += --cmdline "$(INTERNAL_KERNEL_CMDLINE)"
+  ifdef BUILD_ENFORCE_SELINUX
+      ifneq (,$(filter androidboot.selinux=permissive androidboot.selinux=disabled, $(BOARD_KERNEL_CMDLINE)))
+          $(error "Trying to apply non-default selinux settings. Aborting")
+      endif
+  endif
 endif
 ifdef BOARD_KERNEL_BASE
   INTERNAL_RECOVERYIMAGE_ARGS += --base $(BOARD_KERNEL_BASE)
