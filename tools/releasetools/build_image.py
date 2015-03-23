@@ -385,6 +385,8 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
       if base_fs_file is None:
         return False
       build_command.extend(["-d", base_fs_file])
+    if "transparent_compression_method" in prop_dict:
+      build_command.extend(["-M", prop_dict["transparent_compression_method"]])
     build_command.extend(["-L", prop_dict["mount_point"]])
     if "selinux_fc" in prop_dict:
       build_command.append(prop_dict["selinux_fc"])
@@ -528,10 +530,11 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
       "mkyaffs2_extra_flags",
       "selinux_fc",
       "skip_fsck",
-      "verity",
+      "verity",s
       "verity_key",
       "verity_signer_cmd",
       "verity_fec"
+      "transparent_compression_method"
       )
   for p in common_props:
     copy_prop(p, p)
