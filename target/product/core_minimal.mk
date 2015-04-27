@@ -115,6 +115,12 @@ PRODUCT_SYSTEM_SERVER_APPS += \
     SettingsProvider \
     WallpaperBackup
 
+ifeq ($(filter NIGHTLY SNAPSHOT EXPERIMENTAL,$(CM_BUILDTYPE)),)
+# External system server capable jar
+PRODUCT_SYSTEM_SERVER_JARS += \
+    org.cyanogenmod.platform
+endif
+
 # Adoptable external storage supports both ext4 and f2fs
 PRODUCT_PACKAGES += \
     e2fsck \
