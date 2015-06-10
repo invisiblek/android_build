@@ -29,6 +29,11 @@ import threading
 import time
 import zipfile
 
+try:
+  from backports import lzma;
+except ImportError:
+  lzma = None
+
 import blockimgdiff
 
 from hashlib import sha1 as sha1
@@ -1400,12 +1405,14 @@ def ComputeDifferences(diffs):
 
 class BlockDifference(object):
   def __init__(self, partition, tgt, src=None, check_first_block=False,
-               version=None, disable_imgdiff=False):
+               version=None, disable_imgdiff=False, use_lzma=False):
     self.tgt = tgt
     self.src = src
     self.partition = partition
     self.check_first_block = check_first_block
     self.disable_imgdiff = disable_imgdiff
+    self.use_lzma = use_lzma
+
 
     if version is None:
       version = 1
@@ -1417,7 +1424,8 @@ class BlockDifference(object):
 
     b = blockimgdiff.BlockImageDiff(tgt, src, threads=OPTIONS.worker_threads,
                                     version=self.version,
-                                    disable_imgdiff=self.disable_imgdiff)
+                                    disable_imgdiff=self.disable_imgdiff,
+                                    use_lzma=use_lzma)
     tmpdir = tempfile.mkdtemp()
     OPTIONS.tempfiles.append(tmpdir)
     self.path = os.path.join(tmpdir, partition)
@@ -1591,12 +1599,21 @@ class BlockDifference(object):
         'endif;' % (code, partition))
 
   def _WriteUpdate(self, script, output_zip):
+    suffix = ".new.dat"
+
     ZipWrite(output_zip,
              '{}.transfer.list'.format(self.path),
              '{}.transfer.list'.format(self.partition))
-    ZipWrite(output_zip,
-             '{}.new.dat'.format(self.path),
-             '{}.new.dat'.format(self.partition))
+    if lzma and self.use_lzma:
+      suffix += ".xz"
+      ZipWrite(output_zip,
+               '{}'.format(self.path) + suffix,
+               '{}'.format(self.partition) + suffix,
+               compress_type=zipfile.ZIP_STORED)
+    else:
+      ZipWrite(output_zip,
+               '{}'.format(self.path) + suffix,
+               '{}'.format(self.partition) + suffix)
     ZipWrite(output_zip,
              '{}.patch.dat'.format(self.path),
              '{}.patch.dat'.format(self.partition),
@@ -1609,7 +1626,7 @@ class BlockDifference(object):
 
     call = ('block_image_update("{device}", '
             'package_extract_file("{partition}.transfer.list"), '
-            '"{partition}.new.dat", "{partition}.patch.dat") ||\n'
+            '"{partition}{suffix}", "{partition}.patch.dat") ||\n'
             '  abort("E{code}: Failed to update {partition} image.");'.format(
                 device=self.device, partition=self.partition, code=code))
     script.AppendExtra(script.WordWrap(call))

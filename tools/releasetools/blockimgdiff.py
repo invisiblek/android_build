@@ -29,8 +29,13 @@ import threading
 import time
 import tempfile
 
-from rangelib import RangeSet
+try:
+  from backports import lzma
+except ImportError:
+  lzma = None
+  pass
 
+from rangelib import RangeSet
 
 __all__ = ["EmptyImage", "DataImage", "BlockImageDiff"]
 
@@ -262,7 +267,7 @@ class HeapItem(object):
 
 class BlockImageDiff(object):
   def __init__(self, tgt, src=None, threads=None, version=4,
-               disable_imgdiff=False):
+               disable_imgdiff=False, use_lzma=False):
     if threads is None:
       threads = multiprocessing.cpu_count() // 2
       if threads == 0:
@@ -276,6 +281,7 @@ class BlockImageDiff(object):
     self.touched_src_ranges = RangeSet()
     self.touched_src_sha1 = None
     self.disable_imgdiff = disable_imgdiff
+    self.use_lzma = use_lzma
 
     assert version in (1, 2, 3, 4)
 
@@ -759,7 +765,15 @@ class BlockImageDiff(object):
     print("Reticulating splines...")
     diff_q = []
     patch_num = 0
-    with open(prefix + ".new.dat", "wb") as new_f:
+
+    if lzma and self.use_lzma:
+        open_patch = lzma.open
+        new_file = ".new.dat.xz"
+    else:
+        open_patch = open
+        new_file = ".new.dat"
+
+    with open_patch(prefix + new_file, "wb") as new_f:
       for xf in self.transfers:
         if xf.style == "zero":
           pass
