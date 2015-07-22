@@ -2500,6 +2500,9 @@ endif
 ifeq ($(BOARD_USES_FULL_RECOVERY_IMAGE),true)
 	$(hide) echo "full_recovery_image=true" >> $(zip_root)/META/misc_info.txt
 endif
+ifdef TARGET_RELEASETOOL_FACTORY_FROM_TARGET_SCRIPT
+	$(hide) echo "factory_from_target_script=$(TARGET_RELEASETOOL_FACTORY_FROM_TARGET_SCRIPT)" >> $(zip_root)/META/misc_info.txt
+endif
 ifeq ($(BOARD_AVB_ENABLE),true)
 	$(hide) echo "avb_enable=true" >> $(zip_root)/META/misc_info.txt
 	$(hide) echo "avb_vbmeta_key_path=$(BOARD_AVB_KEY_PATH)" >> $(zip_root)/META/misc_info.txt
