@@ -210,6 +210,31 @@ def AddDtbo(output_zip, prefix="IMAGES/"):
   return img.name
 
 
+
+def AddOem(output_zip, prefix="IMAGES/"):
+  """Turn the contents of OEM into a oem image and store in it
+  output_zip."""
+
+  prebuilt_path = os.path.join(OPTIONS.input_tmp, prefix, "oem.img")
+  if os.path.exists(prebuilt_path):
+    print "oem.img already exists in %s, no need to rebuild..." % (prefix,)
+    return
+
+  block_list = common.MakeTempFile(prefix="oem-blocklist-", suffix=".map")
+  imgname = BuildOem(OPTIONS.input_tmp, OPTIONS.info_dict,
+                     block_list=block_list)
+  with open(imgname, "rb") as f:
+    common.ZipWriteStr(output_zip, prefix + "oem.img", f.read())
+  with open(block_list, "rb") as f:
+    common.ZipWriteStr(output_zip, prefix + "oem.map", f.read())
+
+
+def BuildOem(input_dir, info_dict, block_list=None):
+  """Build the (sparse) oem image and return the name of a temp
+  file containing it."""
+  return CreateImage(input_dir, info_dict, "oem", block_list=block_list)
+
+
 def CreateImage(input_dir, info_dict, what, output_file, block_list=None):
   print("creating " + what + ".img...")
 
@@ -536,6 +561,12 @@ def AddImagesToTargetFiles(filename):
   has_system_other = os.path.isdir(os.path.join(OPTIONS.input_tmp,
                                                 "SYSTEM_OTHER"))
 
+  try:
+    input_zip.getinfo("OEM/")
+    has_oem = True
+  except KeyError:
+    has_oem = False
+
   if input_zip:
     OPTIONS.info_dict = common.LoadInfoDict(input_zip, OPTIONS.input_tmp)
 
@@ -637,6 +668,9 @@ def AddImagesToTargetFiles(filename):
 
   banner("extrauserdata")
   AddUserdataExtra(output_zip)
+  if has_oem:
+    banner("oem")
+    AddOem(output_zip)
 
   # For devices using A/B update, copy over images from RADIO/ and/or
   # VENDOR_IMAGES/ to IMAGES/ and make sure we have all the needed

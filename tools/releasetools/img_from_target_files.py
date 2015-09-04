@@ -114,6 +114,12 @@ def main(argv):
       if image == "recovery-two-step.img":
         continue
       common.ZipWrite(output_zip, os.path.join(images_path, image), image)
+      try:
+        input_zip.getinfo("OEM/")
+        banner("AddOem")
+        add_img_to_target_files.AddOem(output_zip, prefix="")
+      except KeyError:
+        pass   # no oem partition for this device
 
   finally:
     print("cleaning up...")
