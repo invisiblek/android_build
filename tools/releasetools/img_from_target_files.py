@@ -105,21 +105,18 @@ def main(argv):
   try:
     images_path = os.path.join(OPTIONS.input_tmp, "IMAGES")
     # A target-files zip must contain the images since Lollipop.
+    # Skip oem.img files since they are not needed in fastboot images.
     assert os.path.exists(images_path)
     for image in sorted(os.listdir(images_path)):
       if bootable_only and image not in ("boot.img", "recovery.img"):
         continue
       if not image.endswith(".img"):
         continue
+      if i == "oem.img":
+        continue
       if image == "recovery-two-step.img":
         continue
       common.ZipWrite(output_zip, os.path.join(images_path, image), image)
-      try:
-        input_zip.getinfo("OEM/")
-        banner("AddOem")
-        add_img_to_target_files.AddOem(output_zip, prefix="")
-      except KeyError:
-        pass   # no oem partition for this device
 
   finally:
     print("cleaning up...")
