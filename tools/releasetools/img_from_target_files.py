@@ -34,8 +34,12 @@ if sys.hexversion < 0x02070000:
   print("Python 2.7 or newer is required.", file=sys.stderr)
   sys.exit(1)
 
+import errno
 import os
+import re
 import shutil
+import subprocess
+import tempfile
 import zipfile
 
 import common
