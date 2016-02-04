@@ -364,6 +364,10 @@ class EdifyGenerator(object):
         else:
           self.script.append(
               'package_extract_file("%(fn)s", "%(device)s");' % args)
+      elif partition_type == "OSIP":
+        self.script.append(
+            'write_osip_image(package_extract_file("%(fn)s"), "%(device)s");'
+            % args)
       else:
         raise ValueError(
             "don't know how to write \"%s\" partitions" % p.fs_type)
