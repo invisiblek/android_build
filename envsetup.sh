@@ -816,7 +816,6 @@ function mm()
         local M=$(findmakefile)
         local MODULES=
         local GET_INSTALL_PATH=
-        local ARGS=
         # Remove the path to top as the makefilepath needs to be relative
         local M=`echo $M|sed 's:'$T'/::'`
         if [ ! "$T" ]; then
@@ -834,18 +833,17 @@ function mm()
             done
             if [ -n "$GET_INSTALL_PATH" ]; then
               MODULES=
-              ARGS=GET-INSTALL-PATH-IN-$(dirname ${M})
-              ARGS=${ARGS//\//-}
+              # set all args to 'GET-INSTALL-PATH'
+              set -- GET-INSTALL-PATH
             else
               MODULES=MODULES-IN-$(dirname ${M})
               # Convert "/" to "-".
               MODULES=${MODULES//\//-}
-              ARGS=$@
             fi
             if [ "1" = "${WITH_TIDY_ONLY}" -o "true" = "${WITH_TIDY_ONLY}" ]; then
               MODULES=tidy_only
             fi
-            ONE_SHOT_MAKEFILE=$M _wrap_build $DRV $T/build/soong/soong_ui.bash --make-mode $MODULES $ARGS
+            ONE_SHOT_MAKEFILE=$M _wrap_build $DRV $T/build/soong/soong_ui.bash --make-mode $MODULES "$@"
         fi
     fi
 }
