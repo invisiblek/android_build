@@ -766,6 +766,9 @@ endif
 # Rules for QCOM targets
 include vendor/lineage/build/core/qcom_target.mk
 
+# Rules for MTK targets
+include vendor/lineage/build/core/mtk_target.mk
+
 # ###############################################################
 # Set up final options.
 # ###############################################################
