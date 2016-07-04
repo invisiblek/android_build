@@ -220,8 +220,9 @@ def BuildVerityMetadata(image_size, verity_metadata_path, root_hash, salt,
          signer_path, key]
   if signer_args:
     cmd.append("--signer_args=\"%s\"" % (' '.join(signer_args),))
-  output, exit_code = RunCommand(cmd)
-  if exit_code != 0:
+  sp = subprocess.Popen(cmd)
+  sp.wait()
+  if sp.returncode != 0:
     print "Could not build verity metadata! Error: %s" % output
     return False
   return True
