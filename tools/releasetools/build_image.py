@@ -215,12 +215,24 @@ def BuildVerityTree(sparse_image_path, verity_image_path, prop_dict):
 
 def BuildVerityMetadata(image_size, verity_metadata_path, root_hash, salt,
                         block_device, signer_path, key, signer_args):
+  verity_key = os.getenv("PRODUCT_VERITY_KEY", None)
+  verity_key_password = None
+
+  if verity_key and os.path.exists(verity_key+".pk8"):
+    verity_key_passwords = {}
+    verity_key_passwords.update(common.PasswordManager().GetPasswords(verity_key.split()))
+    verity_key_password = verity_key_passwords[verity_key]
+
   cmd = ["system/extras/verity/build_verity_metadata.py", "build",
          str(image_size), verity_metadata_path, root_hash, salt, block_device,
          signer_path, key]
   if signer_args:
     cmd.append("--signer_args=\"%s\"" % (' '.join(signer_args),))
-  sp = subprocess.Popen(cmd)
+  if verity_key_password is not None:
+    sp = subprocess.Popen(runcmd, stdin=subprocess.PIPE)
+    sp.communicate(verity_key_password)
+  else:
+    sp = subprocess.Popen(runcmd)
   sp.wait()
   if sp.returncode != 0:
     print "Could not build verity metadata! Error: %s" % output
