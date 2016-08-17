@@ -116,10 +116,8 @@ PRODUCT_SYSTEM_SERVER_APPS += \
     SettingsProvider \
     WallpaperBackup
 
-# Adoptable external storage supports both ext4 and f2fs
+# Adoptable external storage f2fs support
 PRODUCT_PACKAGES += \
-    e2fsck \
-    make_ext4fs \
     fsck.f2fs \
     make_f2fs \
 
