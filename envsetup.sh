@@ -98,7 +98,7 @@ function get_abs_build_var()
         echo "Couldn't locate the top of the tree.  Try setting TOP." >&2
         return
     fi
-    (\cd $T; CALLED_FROM_SETUP=true BUILD_SYSTEM=build/core \
+    (\cd $T; export CALLED_FROM_SETUP=true; export BUILD_SYSTEM=build/core; \
       command make --no-print-directory -f build/core/config.mk dumpvar-abs-$1)
 }
 
@@ -116,7 +116,7 @@ function get_build_var()
         echo "Couldn't locate the top of the tree.  Try setting TOP." >&2
         return
     fi
-    (\cd $T; CALLED_FROM_SETUP=true BUILD_SYSTEM=build/core \
+    (\cd $T; export CALLED_FROM_SETUP=true; export BUILD_SYSTEM=build/core; \
       command make --no-print-directory -f build/core/config.mk dumpvar-$1)
 }
 
