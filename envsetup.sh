@@ -28,6 +28,7 @@ Invoke ". build/envsetup.sh" from your shell to add the following functions to y
 - cmrebase:  Rebase a Gerrit change and push it again
 - mka:       Builds using SCHED_BATCH on all processors
 - reposync:  Parallel repo sync using ionice and SCHED_BATCH
+- repodiff:  Diff 2 different branches or tags within the same repo
 
 Environment options:
 - SANITIZE_HOST: Set to 'true' to use ASAN for all host modules. Note that
