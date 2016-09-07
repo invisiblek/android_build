@@ -116,7 +116,7 @@ def main(argv):
         continue
       if not image.endswith(".img"):
         continue
-      if i == "oem.img":
+      if image == "oem.img":
         continue
       if image == "recovery-two-step.img":
         continue
