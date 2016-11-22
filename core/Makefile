@@ -1142,7 +1142,15 @@ $(recovery_uncompressed_ramdisk): $(MKBOOTFS) \
 $(recovery_ramdisk): $(MINIGZIP) \
 		$(recovery_uncompressed_ramdisk)
 	@echo "----- Making compressed recovery ramdisk ------"
+ifndef BOARD_CUSTOM_BOOTIMG_MK
+ifndef BOARD_RECOVERY_LZMA_RAMDISK
 	$(hide) $(MINIGZIP) < $(recovery_uncompressed_ramdisk) > $@
+else
+	$(hide) lzma < $(recovery_uncompressed_ramdisk) > $@
+endif
+else
+	$(hide) $(MINIGZIP) < $(recovery_uncompressed_ramdisk) > $@
+endif
 
 ifndef BOARD_CUSTOM_BOOTIMG_MK
 $(INSTALLED_RECOVERYIMAGE_TARGET): $(MKBOOTIMG) $(recovery_ramdisk) $(recovery_kernel) \
