@@ -223,9 +223,9 @@ def BuildVerityMetadata(image_size, verity_metadata_path, root_hash, salt,
     verity_key_passwords.update(common.PasswordManager().GetPasswords(verity_key.split()))
     verity_key_password = verity_key_passwords[verity_key]
 
-  cmd = ["system/extras/verity/build_verity_metadata.py", "build",
+  cmd = [str(a) for a in ["system/extras/verity/build_verity_metadata.py", "build",
          str(image_size), verity_metadata_path, root_hash, salt, block_device,
-         signer_path, key]
+         signer_path, key]]
   if signer_args:
     cmd.append("--signer_args=\"%s\"" % (' '.join(signer_args),))
   if verity_key_password is not None:
