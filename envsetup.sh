@@ -1765,4 +1765,4 @@ check_bash_version && {
 
 export ANDROID_BUILD_TOP=$(gettop)
 
-. vendor/lineage/build/envsetup.sh
+. $ANDROID_BUILD_TOP/vendor/lineage/build/envsetup.sh
