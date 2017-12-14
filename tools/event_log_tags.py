@@ -65,7 +65,7 @@ class TagFile(object):
       for self.linenum, line in enumerate(file_object):
         self.linenum += 1
 
-        line = line.strip()
+        line = line.decode('utf-8').strip()
         if not line or line[0] == '#': continue
         parts = re.split(r"\s+", line, 2)
 
@@ -130,7 +130,7 @@ def WriteOutput(output_file, data):
       output_file = "<stdout>"
     else:
       out = open(output_file, "wb")
-    out.write(data)
+    out.write(data.encode('utf-8'))
     out.close()
   except (IOError, OSError) as e:
     print("failed to write %s: %s" % (output_file, e), file=sys.stderr)
